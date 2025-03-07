@@ -18,6 +18,30 @@ class ClienteController extends Controller
         return view('cliente.create');
     }
 
+    public function storeMultiple(Request $request)
+    {
+        // Validar que el JSON sea un array de clientes
+        $request->validate([
+            'clientes' => 'required|array',
+            'clientes.*.Nombre' => 'required|string|max:255',
+            'clientes.*.Apellido' => 'required|string|max:255',
+            'clientes.*.Email' => 'required|string|max:255',
+            'clientes.*.Telefono' => 'required|string|max:255',
+            'clientes.*.Ciudad' => 'required|string|max:255',
+        ]);
+
+        // Obtener los clientes del JSON
+        $clientes = $request->input('clientes');
+
+        // Insertar todos los clientes en una sola consulta
+        Cliente::insert($clientes);
+
+        return response()->json([
+            'message' => 'Clientes insertados correctamente',
+            'total_clientes' => count($clientes)
+        ], 201);
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -39,7 +63,16 @@ class ClienteController extends Controller
 
     public function show($id)
     {
-        return view('cliente.show');
+        // Buscar el cliente por su ID
+        $cliente = Cliente::find($id);
+
+        // Verificar si el cliente existe
+        if (!$cliente) {
+            return response()->json(['message' => 'Cliente no encontrado'], 404);
+        }
+
+        // Retornar el cliente en formato JSON
+        return response()->json($cliente, 200);
     }
 
     public function edit($id)
@@ -77,9 +110,10 @@ class ClienteController extends Controller
         ],200);
     }
 
-    public function destroy($id)
+    public function destroy(Cliente $cliente)
     {
         $cliente->delete();
+
         return response()->json([
             'message' => 'Cliente eliminado correctamente'
         ], 200);
