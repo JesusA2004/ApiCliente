@@ -7,6 +7,8 @@ use App\Models\Cliente;
 
 class ClienteController extends Controller
 {
+
+    // Metodo para listar a todos los clientes
     public function index()
     {
         $cliente = Cliente::all();
@@ -18,6 +20,7 @@ class ClienteController extends Controller
         return view('cliente.create');
     }
 
+    // Metodo para insertar varios clientes
     public function storeMultiple(Request $request)
     {
         // Validar que el JSON sea un array de clientes
@@ -42,6 +45,7 @@ class ClienteController extends Controller
         ], 201);
     }
 
+    // Metodo para insertar un solo cliente
     public function store(Request $request)
     {
         $request->validate([
@@ -61,6 +65,7 @@ class ClienteController extends Controller
         return response()->json($cliente, 201);
     }
 
+    // Metodo para obtener a un solo cliente
     public function show($id)
     {
         // Buscar el cliente por su ID
@@ -80,6 +85,7 @@ class ClienteController extends Controller
         return view('cliente.edit');
     }
 
+    // Metodo para hacer un update a un cliente
     public function update(Request $request, $id)
     {
         $cliente = Cliente::find($id);
@@ -110,13 +116,18 @@ class ClienteController extends Controller
         ],200);
     }
 
-    public function destroy(Cliente $cliente)
+    // Metodo para eliminar un cliente
+    public function destroy($id)
     {
-        $cliente->delete();
+        $cliente = Cliente::find($id); // Verifica que $id sea el correcto
 
-        return response()->json([
-            'message' => 'Cliente eliminado correctamente'
-        ], 200);
+        if (!$cliente) {
+            return response()->json(['message' => 'Cliente no encontrado'], 404);
+        }
+
+        $cliente->delete(); // Elimina el registro
+
+        return response()->json(['message' => 'Cliente eliminado con éxito'], 200);
     }
 
 }

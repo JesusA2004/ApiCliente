@@ -15,7 +15,7 @@ Route::get('clientes', [ClienteController::class, 'index']);
 Route::get('clientes/{id}', [ClienteController::class, 'show']);
 
 // Ruta para insertar a varios clientes (POST)
-Route::post('multiples/clientes', [ClienteController::class, 'storeMultiple']);
+Route::post('clientes/multiple', [ClienteController::class, 'storeMultiple']);
 
 // Ruta para insertar a un solo cliente (PUT)
 Route::post('clientes', [ClienteController::class, 'store']);
